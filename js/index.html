@@ -46,6 +46,7 @@
                         $('table tbody').append('<tr><th>' + CACHEsml[i].id + '</th><th>' + CACHEsml[i].firstName + '</th><th>' + CACHEsml[i].lastName + '</th><th>' + CACHEsml[i].email + '</th><th>' + CACHEsml[i].phone + '</th></tr>');
                     }
                     $('button').attr('disabled',false);
+                    rowClick();
                 }
             });
         }
@@ -105,9 +106,15 @@
                         $('#data tr').css('opacity','0.0').hide().slice(startItem, endItem).css('display', 'table-row').animate({opacity:1}, 300);
                     });
                     $('button').attr('disabled',false);
+                    rowClick();
                 }
             });
         }
+    }
+    function rowClick() {
+        $("table").on("click", "tbody tr", function(e){
+            console.log("Testing click")
+        })
     }
 </script>
 </body>
