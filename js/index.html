@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>TestQuest</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<button class="btn" style="border: 1px solid black; margin: 10px" onclick="loadSmallData()">SmallData</button>
+<button class="btn" style="border: 1px solid black" onclick="loadBigData()">BigData</button>
+
+<table class="table table-bordered">
+    <div id="nav"></div>
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>firstName</th>
+            <th>lastName</th>
+            <th>email</th>
+            <th>phone</th>
+        </tr>
+    </thead>
+    <tbody id="data"></tbody>
+</table>
+<script src="jquery-2.1.1.min.js" type="text/javascript"></script>
+<script>
+    var CACHEsml = [], CACHEbig = [];
+    function loadSmallData() {
+        $('button').attr('disabled',true);
+        $('tbody').children().remove();
+        $('#nav').children().remove();
+        if (CACHEsml.length != 0) {
+            for(var i= 0;i<CACHEsml.length; i++) {
+                $('table tbody').append('<tr><th>' + CACHEsml[i].id + '</th><th>' + CACHEsml[i].firstName + '</th><th>' + CACHEsml[i].lastName + '</th><th>' + CACHEsml[i].email + '</th><th>' + CACHEsml[i].phone + '</th></tr>');
+            }
+            $('button').attr('disabled',false);
+        } else {
+            $.ajax({
+                type: "GET",
+                url: "http://www.filltext.com/?rows=32&id={number|1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&adress={addressObject}&description={lorem|32}",
+                dataType: "json",
+                success: function(data) {
+                    CACHEsml = data;
+                    var numPages = Math.ceil(CACHEsml.length / 50);
+                    for(var i= 0;i<CACHEsml.length; i++) {
+                        $('table tbody').append('<tr><th>' + CACHEsml[i].id + '</th><th>' + CACHEsml[i].firstName + '</th><th>' + CACHEsml[i].lastName + '</th><th>' + CACHEsml[i].email + '</th><th>' + CACHEsml[i].phone + '</th></tr>');
+                    }
+                    $('button').attr('disabled',false);
+                }
+            });
+        }
+    }
+    function loadBigData() {
+        $('button').attr('disabled',true);
+        $('tbody').children().remove();
+        if (CACHEbig.length != 0) {
+            for(var i= 0;i<CACHEbig.length; i++) {
+                $('table tbody').append('<tr><th>' + CACHEbig[i].id + '</th><th>' + CACHEbig[i].firstName + '</th><th>' + CACHEbig[i].lastName + '</th><th>' + CACHEbig[i].email + '</th><th>' + CACHEbig[i].phone + '</th></tr>');
+            }
+            var rowsShown = 50;
+            var rowsTotal = $('table tr').length;
+            var numPages = rowsTotal/rowsShown;
+            for (i = 0;i< numPages; i++) {
+                var pageNum = i + 1;
+                $('#nav').append('<a href="#" rel="'+i+'">'+pageNum+" "+'</a>');
+            }
+            $('#data tr').hide();
+            $('#data tr').slice(0 , rowsShown).show();
+            $('#nav a:first').addClass('active');
+            $('#nav a').bind('click', function(){
+                $('#nav a').removeClass('active');
+                $(this).addClass('active');
+                var curPage = $(this).attr('rel');
+                var startItem = curPage * rowsShown;
+                var endItem = startItem + rowsShown;
+                $('#data tr').css('opacity','0.0').hide().slice(startItem, endItem).css('display', 'table-row').animate({opacity:1}, 300);
+            });
+            $('button').attr('disabled',false);
+        } else {
+            $.ajax({
+                type: "GET",
+                url: "http://www.filltext.com/?rows=1000&id={number|1000}&firstName={firstName}&delay=3&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&adress={addressObject}&description={lorem|32}",
+                dataType: "json",
+                success: function(data) {
+                    CACHEbig = data;
+                    for (var i = 0; i < data.length; i++) {
+                        $('table tbody').append('<tr><th>' + data[i].id + '</th><th>' + data[i].firstName + '</th><th>' + data[i].lastName + '</th><th>' + data[i].email + '</th><th>' + data[i].phone + '</th></tr>');
+                    }
+                    var rowsShown = 50;
+                    var rowsTotal = $('table tr').length;
+                    var numPages = rowsTotal/rowsShown;
+                    for (i = 0;i< numPages; i++) {
+                        var pageNum = i + 1;
+                        $('#nav').append('<a href="#" rel="'+i+'">'+pageNum+" "+'</a>');
+                    }
+                    $('#data tr').hide();
+                    $('#data tr').slice(0 , rowsShown).show();
+                    $('#nav a:first').addClass('active');
+                    $('#nav a').bind('click', function(){
+                        $('#nav a').removeClass('active');
+                        $(this).addClass('active');
+                        var curPage = $(this).attr('rel');
+                        var startItem = curPage * rowsShown;
+                        var endItem = startItem + rowsShown;
+                        $('#data tr').css('opacity','0.0').hide().slice(startItem, endItem).css('display', 'table-row').animate({opacity:1}, 300);
+                    });
+                    $('button').attr('disabled',false);
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>
