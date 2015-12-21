@@ -1,0 +1,8 @@
+.loader {
+    text-align: center;
+    top: 50%;
+    position: absolute;
+    left: 50%;
+    margin-top: -64px;
+    margin-left: -64px
+}
